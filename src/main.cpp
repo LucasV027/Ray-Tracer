@@ -1,26 +1,20 @@
 #include <iostream>
 
+#include "core/image.h"
+
 int main(void)
 {
-    int image_width = 256;
-    int image_height = 256;
+    image img(256, 256);
 
-    std::cout << "P3\n"
-              << image_width << ' ' << image_height << "\n255\n";
-
-    for (int j = 0; j < image_height; j++)
+    for (int j = 0; j < img.height(); j++)
     {
-        for (int i = 0; i < image_width; i++)
+        std::clog << "\rScanlines remaining: " << (img.height() - j) << ' ' << std::flush;
+        for (int i = 0; i < img.width(); i++)
         {
-            auto r = double(i) / (image_width - 1);
-            auto g = double(j) / (image_height - 1);
-            auto b = 0.0;
-
-            int ir = int(255.999 * r);
-            int ig = int(255.999 * g);
-            int ib = int(255.999 * b);
-
-            std::cout << ir << ' ' << ig << ' ' << ib << '\n';
+            auto pixel_color = color(double(i) / (img.width() - 1), double(j) / (img.height() - 1), 0);
+            img.set_pixel(i, j, pixel_color);
         }
     }
+
+    std::clog << "\rDone.                 \n";
 }
