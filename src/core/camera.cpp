@@ -25,6 +25,7 @@ void camera::render()
     std::default_random_engine rng(hwseed());
     std::uniform_real_distribution<double> u;
 
+#pragma omp parallel for schedule(dynamic, 1)
     for (int j = 0; j < image_height; j++)
     {
         for (int i = 0; i < image_width; i++)
