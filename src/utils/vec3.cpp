@@ -17,21 +17,21 @@ double &vec3::operator[](int i) { return e[i]; }
 
 vec3 &vec3::operator+=(const vec3 &v)
 {
-    for (size_t i = 0; i < 2; i++)
+    for (size_t i = 0; i < 3; i++)
         e[i] += v.e[i];
     return *this;
 }
 
 vec3 &vec3::operator*=(double t)
 {
-    for (size_t i = 0; i < 2; i++)
+    for (size_t i = 0; i < 3; i++)
         e[i] *= t;
     return *this;
 }
 
 vec3 &vec3::operator/=(double t)
 {
-    for (size_t i = 0; i < 2; i++)
+    for (size_t i = 0; i < 3; i++)
         e[i] /= t;
     return *this;
 }

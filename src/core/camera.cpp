@@ -1,6 +1,7 @@
 #include "camera.h"
 
 camera::camera(const settings &settings) : origin(settings.lookfrom),
+                                           anti_aliasing(settings.anti_aliasing),
                                            image_width(settings.image_width),
                                            image_height(int(image_width / settings.aspect_ratio)),
                                            aspect_ratio(settings.aspect_ratio),
@@ -20,13 +21,28 @@ void camera::render()
     vec3 delta_u = (u * 2.0 * aspect_ratio) / (image_width - 1);
     vec3 delta_v = (v * 2.0) / (image_height - 1);
 
+    std::random_device hwseed;
+    std::default_random_engine rng(hwseed());
+    std::uniform_real_distribution<double> u;
+
     for (int j = 0; j < image_height; j++)
     {
         for (int i = 0; i < image_width; i++)
         {
-            point3 pixel = up_left_corner + (delta_u * i) + (delta_v * j);
-            vec3 dir = vec3::unit_vector(origin - pixel);
-            img.set_pixel(i, j, ray_color(ray(origin, dir)));
+
+            color acc = colors::black;
+
+            for (int k = 0; k < anti_aliasing; k++)
+            {
+                double ux = (u(rng) - 0.5);
+                double uy = (u(rng) - 0.5);
+
+                point3 pixel = up_left_corner + (delta_u * (i + ux)) + (delta_v * (j + uy));
+                vec3 dir = vec3::unit_vector(origin - pixel);
+                acc += ray_color(ray(origin, dir));
+            }
+
+            img.set_pixel(i, j, acc / anti_aliasing);
         }
     }
 }
@@ -40,8 +56,7 @@ color camera::ray_color(const ray &r) const
     if (closest)
     {
         return closest.col;
-        vec3 N = closest.normal;
-        return 0.5 * color(N.x() + 1, N.y() + 1, N.z() + 1);
+        return world.compute_lighting(closest);
     }
 
     vec3 unit_direction = vec3::unit_vector(r.direction());

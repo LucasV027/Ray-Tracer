@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <string>
+#include <random>
 
 #include "utils/vec3.h"
 #include "image.h"
@@ -22,6 +23,7 @@ public:
 
         unsigned int image_width = 400; // Width of the image
         double aspect_ratio = 16. / 9.; // Aspect ratio of the image
+        int anti_aliasing = 5;
     };
 
 public:
@@ -42,6 +44,7 @@ private:
     vec3 u;
     vec3 v;
     vec3 w;
+    int anti_aliasing;
 
     // Image
     int image_width;

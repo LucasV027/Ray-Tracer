@@ -4,17 +4,22 @@ sphere::sphere(const point3 &center, double radius, const color &col) : center(c
 hit_record sphere::hit(const ray &r) const
 {
     vec3 oc = r.origin() - center;
-    double a = vec3::dot(r.direction(), r.direction());
-    double b = -2 * vec3::dot(r.direction(), oc);
-    double k = vec3::dot(oc, oc) - radius * radius;
+    auto a = vec3::dot(r.direction(), r.direction());
+    auto b = -2.0 * vec3::dot(r.direction(), oc);
+    auto c = vec3::dot(oc, oc) - radius * radius;
+    auto discriminant = b * b - 4 * a * c;
 
-    float det = b * b - 4.f * a * k;
-
-    if (det < 0)
+    if (discriminant < 0)
         return {};
 
-    float t = (-b - sqrt(det)) / (2.f * a);
+    double t = (-b - std::sqrt(discriminant)) / (2.0 * a);
+    if (t < 0)
+    {
+        t = (-b + std::sqrt(discriminant)) / (2.0 * a);
+        if (t < 0)
+            return {};
+    }
 
-    point3 p = r.at(t);
-    return {p, vec3::unit_vector(center - p), t, col};
+    point3 intersection = r.at(t);
+    return {intersection, vec3::unit_vector(center - intersection), t, col};
 }

@@ -1,6 +1,6 @@
 #include "plan.h"
 
-plan::plan(const point3 &point, const vec3 &normal, const color &col) : point(point), normal(normal), col(col) {}
+plan::plan(const point3 &point, const vec3 &normal, const color &col) : point(point), normal(vec3::unit_vector(normal)), col(col) {}
 
 hit_record plan::hit(const ray &r) const
 {
