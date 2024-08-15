@@ -1,13 +1,14 @@
 #pragma once
 
 #include <fstream>
+#include <cassert>
 
 #include "utils/color.h"
 
 class image
 {
 public:
-    image(int width, int height);
+    image(int width, double aspect_ratio);
     ~image();
 
     int width() const;
@@ -17,7 +18,7 @@ public:
     void write_to_file(const char *filename);
 
 private:
-    int image_width = 256;
-    int image_height = 256;
+    int image_width;
+    int image_height;
     color *pixels;
 };

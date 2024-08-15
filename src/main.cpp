@@ -1,20 +1,19 @@
 #include <iostream>
 
+#include "utils/color.h"
 #include "core/image.h"
+#include "core/camera.h"
 
 int main(void)
 {
-    image img(256, 256);
+    image img(400, 16. / 9.);
+    camera::settings cam_settings;
+    cam_settings.lookfrom = point3(0, 0, 0);
+    cam_settings.lookat = point3(0, 0, -1);
+    cam_settings.vup = vec3(0, 1, 0);
 
-    for (int j = 0; j < img.height(); j++)
-    {
-        std::clog << "\rScanlines remaining: " << (img.height() - j) << ' ' << std::flush;
-        for (int i = 0; i < img.width(); i++)
-        {
-            auto pixel_color = color(double(i) / (img.width() - 1), double(j) / (img.height() - 1), 0);
-            img.set_pixel(i, j, pixel_color);
-        }
-    }
+    camera cam(cam_settings);
+    cam.render(&img);
 
-    std::clog << "\rDone.                 \n";
+    img.write_to_file("../output.ppm");
 }

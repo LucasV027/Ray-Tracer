@@ -27,6 +27,9 @@ public:
     vec3 operator*(double t) const;
     vec3 operator/(double t) const;
 
+    friend vec3 operator*(double t, const vec3 &v);
+    friend vec3 operator/(double t, const vec3 &v);
+
     static double dot(const vec3 &u, const vec3 &v);
     static vec3 cross(const vec3 &u, const vec3 &v);
     static vec3 unit_vector(const vec3 &v);
