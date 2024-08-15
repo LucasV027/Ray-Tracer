@@ -1,12 +1,15 @@
 #pragma once
 
+#include <algorithm>
+#include <string>
+
 #include "utils/vec3.h"
 #include "image.h"
 #include "utils/ray.h"
 
 // Shapes
-#include "shapes/sphere.h"
-#include "shapes/plan.h"
+#include "shapes/hittable.h"
+#include "shapes/light.h"
 
 class camera
 {
@@ -23,7 +26,10 @@ public:
 
 public:
     camera(const settings &settings);
+    void scene(const hittable_list &world);
+
     void render();
+
     void write_to_file(const std::string &filename) const;
 
 private:
@@ -44,6 +50,5 @@ private:
     image img;
 
     // World
-    sphere s = sphere(point3(0, 0, -3), 2.);
-    plan p = plan(point3(0, -1, 0), vec3(0, 1, 0));
+    hittable_list world;
 };

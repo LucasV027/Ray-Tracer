@@ -1,6 +1,6 @@
 #include "plan.h"
 
-plan::plan(const point3 &point, const vec3 &normal) : point(point), normal(normal) {}
+plan::plan(const point3 &point, const vec3 &normal, const color &col) : point(point), normal(normal), col(col) {}
 
 hit_record plan::hit(const ray &r) const
 {
@@ -9,5 +9,5 @@ hit_record plan::hit(const ray &r) const
     if (t < 0.f)
         return {};
 
-    return {r.at(t), normal, t};
+    return {r.at(t), normal, t, col};
 }

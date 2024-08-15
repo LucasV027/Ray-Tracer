@@ -22,12 +22,13 @@ const double infinity = std::numeric_limits<double>::infinity();
 
 struct hit_record
 {
-    point3 p;
+    point3 point;
     vec3 normal;
     double t;
+    color col;
 
-    hit_record() : p(), normal(), t(infinity) {}
-    hit_record(point3 p, vec3 normal, double t) : p(p), normal(normal), t(t) {}
+    hit_record() : point(), normal(), t(infinity), col() {}
+    hit_record(point3 point, vec3 normal, double t, color color) : point(point), normal(normal), t(t), col(color) {}
 
     operator bool() const { return t >= 0 && t < infinity; }
 };

@@ -13,6 +13,8 @@ camera::camera(const settings &settings) : origin(settings.lookfrom),
     up_left_corner = settings.lookfrom + settings.lookat - (u * settings.aspect_ratio) - v;
 }
 
+void camera::scene(const hittable_list &world_) { world = world_; }
+
 void camera::render()
 {
     vec3 delta_u = (u * 2.0 * aspect_ratio) / (image_width - 1);
@@ -33,13 +35,16 @@ void camera::write_to_file(const std::string &filename) const { img.write_to_fil
 
 color camera::ray_color(const ray &r) const
 {
-    hit_record sphere = s.hit(r);
-    hit_record plan = p.hit(r);
+    auto closest = world.hit(r);
 
-    if (!sphere && !plan)
-        return colors::black;
-    else if (sphere.t < plan.t) // Sphere is closer
-        return colors::blue;
-    else // Plan is closer
-        return colors::green;
+    if (closest)
+    {
+        return closest.col;
+        vec3 N = closest.normal;
+        return 0.5 * color(N.x() + 1, N.y() + 1, N.z() + 1);
+    }
+
+    vec3 unit_direction = vec3::unit_vector(r.direction());
+    auto a = 0.5 * (unit_direction.y() + 1.0);
+    return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
 }
