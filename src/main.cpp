@@ -18,4 +18,5 @@ int main(void)
     camera cam(cam_settings);
 
     cam.render();
+    cam.write_to_file("../output.png");
 }

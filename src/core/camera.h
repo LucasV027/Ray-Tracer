@@ -3,7 +3,10 @@
 #include "utils/vec3.h"
 #include "image.h"
 #include "utils/ray.h"
+
+// Shapes
 #include "shapes/sphere.h"
+#include "shapes/plan.h"
 
 class camera
 {
@@ -41,5 +44,6 @@ private:
     image img;
 
     // World
-    sphere s = sphere(point3(0, 0, -3), 0.5);
+    sphere s = sphere(point3(0, 0, -3), 2.);
+    plan p = plan(point3(0, -1, 0), vec3(0, 1, 0));
 };

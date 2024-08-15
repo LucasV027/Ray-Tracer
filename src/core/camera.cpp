@@ -33,16 +33,13 @@ void camera::write_to_file(const std::string &filename) const { img.write_to_fil
 
 color camera::ray_color(const ray &r) const
 {
-    if (s.hit(r))
-        return colors::green;
+    hit_record sphere = s.hit(r);
+    hit_record plan = p.hit(r);
 
-    vec3 unit_direction = vec3::unit_vector(r.direction());
-    auto a = unit_direction.y();
-
-    if (a > 0)
-        return colors::white;
-    else if (a < 0)
+    if (!sphere && !plan)
         return colors::black;
-    else
-        return colors::red;
+    else if (sphere.t < plan.t) // Sphere is closer
+        return colors::blue;
+    else // Plan is closer
+        return colors::green;
 }
