@@ -13,6 +13,10 @@ public:
     double y() const;
     double z() const;
 
+    double r() const;
+    double g() const;
+    double b() const;
+
     vec3 operator-() const;
     double operator[](int i) const;
     double &operator[](int i);
