@@ -59,9 +59,14 @@ void image::write_to_file_png(const std::string &filename) const
         {
             const color &c = pixels[y * image_width + x];
             int index = offset(x, y) * 3;
-            data[index + 0] = static_cast<unsigned char>(255.999 * c.r());
-            data[index + 1] = static_cast<unsigned char>(255.999 * c.g());
-            data[index + 2] = static_cast<unsigned char>(255.999 * c.b());
+
+            double r = std::min(1., c.r());
+            double g = std::min(1., c.g());
+            double b = std::min(1., c.b());
+
+            data[index + 0] = static_cast<unsigned char>(255.999 * r);
+            data[index + 1] = static_cast<unsigned char>(255.999 * g);
+            data[index + 2] = static_cast<unsigned char>(255.999 * b);
         }
     }
 

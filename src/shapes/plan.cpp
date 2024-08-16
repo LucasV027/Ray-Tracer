@@ -4,10 +4,14 @@ plan::plan(const point3 &point, const vec3 &normal, const color &col) : point(po
 
 hit_record plan::hit(const ray &r) const
 {
-    double t = vec3::dot(normal, r.origin() - point) / vec3::dot(normal, r.direction());
+    double denom = vec3::dot(normal, r.direction());
 
-    if (t < 0.f)
-        return {};
+    if (fabs(denom) > 1e-6)
+    {
+        double t = vec3::dot(point - r.origin(), normal) / denom;
+        if (t >= 0)
+            return {r.at(t), normal, t, col};
+    }
 
-    return {r.at(t), normal, t, col};
+    return {};
 }

@@ -41,6 +41,8 @@ public:
     double length() const;
     double length_squared() const;
 
+    vec3 to(const vec3 &v) const;
+
     friend std::ostream &operator<<(std::ostream &out, const vec3 &v);
 
 private:

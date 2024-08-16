@@ -98,6 +98,11 @@ double vec3::length_squared() const
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 }
 
+vec3 vec3::to(const vec3 &v) const
+{
+    return v - *this;
+}
+
 std::ostream &operator<<(std::ostream &out, const vec3 &v)
 {
     return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];

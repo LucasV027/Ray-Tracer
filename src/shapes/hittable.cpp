@@ -13,7 +13,7 @@ hit_record hittable_list::hit(const ray &r) const
     for (const auto &object : objects)
     {
         hit_record hit = object->hit(r);
-        if (hit.t < closest.t)
+        if (hit && hit.t < closest.t)
             closest = hit;
     }
 
@@ -26,15 +26,16 @@ color hittable_list::compute_lighting(const hit_record &hit) const
 
     for (const auto &l : lights)
     {
-        vec3 light_direction = vec3::unit_vector(l.position - hit.point);
+        vec3 ligth_ray = hit.point.to(l.position);
+        vec3 light_direction = vec3::unit_vector(ligth_ray);
 
         ray shadow_ray = ray(hit.point + 0.001 * hit.normal, light_direction);
-        auto hr = this->hit(shadow_ray);
+        hit_record hr = this->hit(shadow_ray);
 
-        if (!(hr.t > 0. && hr.t < 1.0))
+        if (hr.t < 0. || hr.t > 1.)
         {
             double cos_thetha = std::max(0., vec3::dot(hit.normal, light_direction));
-            acc += hit.col * l.col * cos_thetha;
+            acc += hit.col * l.col * l.intensity * cos_thetha;
         }
     }
 

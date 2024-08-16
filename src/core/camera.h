@@ -28,7 +28,7 @@ public:
 
 public:
     camera(const settings &settings);
-    void scene(const hittable_list &world);
+    hittable_list &scene();
 
     void render();
 
