@@ -7,6 +7,8 @@
 #include "utils/vec3.h"
 #include "image.h"
 #include "utils/ray.h"
+#include "utils/color.h"
+#include "utils/math.h"
 
 // Shapes
 #include "shapes/hittable.h"
@@ -23,6 +25,8 @@ public:
 
         unsigned int image_width = 400; // Width of the image
         double aspect_ratio = 16. / 9.; // Aspect ratio of the image
+        double vfov = 90;               // Vertical field of view in degrees
+
         int anti_aliasing = 5;
     };
 
@@ -45,6 +49,12 @@ private:
     vec3 v;
     vec3 w;
     int anti_aliasing;
+
+    // Viewport
+    double viewport_width;
+    double viewport_height;
+    vec3 delta_u;
+    vec3 delta_v;
 
     // Image
     int image_width;

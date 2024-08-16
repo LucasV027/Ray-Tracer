@@ -7,19 +7,31 @@ camera::camera(const settings &settings) : origin(settings.lookfrom),
                                            aspect_ratio(settings.aspect_ratio),
                                            img(image(image_width, aspect_ratio))
 {
+
+    auto focal_length = (settings.lookat.to(settings.lookfrom)).length();
+    auto theta = math::degrees_to_radians(settings.vfov);
+    auto h = std::tan(theta / 2);
+    auto viewport_height = 2 * h * focal_length;
+    auto viewport_width = viewport_height * (double(image_width) / image_height);
+
     w = vec3::unit_vector(settings.lookat.to(settings.lookfrom));
     u = vec3::unit_vector(vec3::cross(settings.vup, w));
     v = vec3::cross(w, u);
 
-    up_left_corner = settings.lookfrom + settings.lookat - (u * settings.aspect_ratio) - v;
+    vec3 viewport_u = viewport_width * u;   // Vector across viewport horizontal edge
+    vec3 viewport_v = viewport_height * -v; // Vector down viewport vertical edge
+
+    delta_u = viewport_u / image_width;
+    delta_v = viewport_v / image_height;
+
+    auto viewport_upper_left = origin - (focal_length * w) - viewport_u / 2 - viewport_v / 2;
+    up_left_corner = viewport_upper_left + (delta_u / 2) + (delta_v / 2);
 }
 
 hittable_list &camera::scene() { return world; }
 
 void camera::render()
 {
-    vec3 delta_u = (u * 2.0 * aspect_ratio) / (image_width - 1);
-    vec3 delta_v = (v * 2.0) / (image_height - 1);
 
     std::random_device hwseed;
     std::default_random_engine rng(hwseed());
