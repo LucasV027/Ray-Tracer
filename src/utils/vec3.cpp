@@ -103,6 +103,16 @@ vec3 vec3::to(const vec3 &v) const
     return v - *this;
 }
 
+vec3 vec3::random() { return vec3(math::random_double(), math::random_double(), math::random_double()); }
+vec3 vec3::random_in_semi_sphere(const vec3 &normal)
+{
+    vec3 random = vec3::random();
+    if (vec3::dot(random, normal) > 0.0)
+        return random;
+    else
+        return -random;
+}
+
 std::ostream &operator<<(std::ostream &out, const vec3 &v)
 {
     return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];

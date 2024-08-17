@@ -3,6 +3,8 @@
 #include <cmath>
 #include <iostream>
 
+#include "math.h"
+
 class vec3
 {
 public:
@@ -42,6 +44,9 @@ public:
     double length_squared() const;
 
     vec3 to(const vec3 &v) const;
+
+    static vec3 random();
+    static vec3 random_in_semi_sphere(const vec3 &normal);
 
     friend std::ostream &operator<<(std::ostream &out, const vec3 &v);
 
