@@ -15,6 +15,16 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(stb_image_write)
 
+
+FetchContent_Declare(
+    SFML
+    GIT_REPOSITORY https://github.com/SFML/SFML.git
+    GIT_TAG        2.6.1
+)
+
+FetchContent_MakeAvailable(SFML)
+
+
 find_package(OpenMP REQUIRED)
 
 # Executable
@@ -23,4 +33,4 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -fopenmp)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 target_include_directories(${PROJECT_NAME}  PRIVATE ${stb_image_write_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-system OpenMP::OpenMP_CXX)

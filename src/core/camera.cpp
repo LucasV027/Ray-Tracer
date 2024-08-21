@@ -29,6 +29,7 @@ camera::camera(const settings &settings) : origin(settings.lookfrom),
 }
 
 hittable_list &camera::scene() { return world; }
+void camera::scene(const hittable_list &scene) { world = scene; }
 
 void camera::render()
 {
@@ -76,3 +77,5 @@ color camera::ray_color(const ray &r) const
     auto a = 0.5 * (unit_direction.y() + 1.0);
     return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
 }
+
+uint8_t *camera::get_image() const { return img.get_pixels(); }

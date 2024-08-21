@@ -33,10 +33,13 @@ public:
 public:
     camera(const settings &settings);
     hittable_list &scene();
+    void scene(const hittable_list &scene);
 
     void render();
 
     void write_to_file(const std::string &filename) const;
+
+    uint8_t *get_image() const;
 
 private:
     color ray_color(const ray &r) const;

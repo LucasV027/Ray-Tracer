@@ -4,6 +4,7 @@
 #include <cassert>
 #include <string>
 #include <vector>
+#include <stdint.h>
 
 #include "utils/color.h"
 
@@ -20,6 +21,9 @@ public:
     int offset(int x, int y) const;
 
     void set_pixel(int x, int y, const color &c);
+    color get_pixel(int x, int y) const;
+
+    uint8_t *get_pixels() const;
 
     void write_to_file_ppm(const std::string &filename) const;
     void write_to_file_png(const std::string &filename) const;
@@ -28,5 +32,5 @@ private:
     int image_width;
     int image_height;
     double aspect_ratio;
-    color *pixels;
+    uint8_t *pixels;
 };

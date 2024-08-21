@@ -10,7 +10,7 @@ image::image(int width, double aspect_ratio)
 {
     assert(image_width > 0);
     assert(image_height > 0);
-    pixels = new color[image_width * image_height]{};
+    pixels = new uint8_t[image_width * image_height * 4]{};
 }
 
 image::~image()
@@ -22,9 +22,25 @@ int image::width() const { return image_width; }
 int image::height() const { return image_height; }
 double image::get_aspect_ratio() const { return aspect_ratio; }
 
-int image::offset(int x, int y) const { return y * image_width + x; }
+int image::offset(int x, int y) const { return (y * image_width + x) * 4; }
 
-void image::set_pixel(int x, int y, const color &c) { pixels[offset(x, y)] = c; }
+void image::set_pixel(int x, int y, const color &c)
+{
+    pixels[offset(x, y) + 0] = static_cast<unsigned char>(255.999 * c.r());
+    pixels[offset(x, y) + 1] = static_cast<unsigned char>(255.999 * c.g());
+    pixels[offset(x, y) + 2] = static_cast<unsigned char>(255.999 * c.b());
+    pixels[offset(x, y) + 3] = 255;
+}
+color image::get_pixel(int x, int y) const
+{
+    double r = pixels[offset(x, y) + 0] / 255.0;
+    double g = pixels[offset(x, y) + 1] / 255.0;
+    double b = pixels[offset(x, y) + 2] / 255.0;
+
+    return color{r, g, b};
+}
+
+uint8_t *image::get_pixels() const { return pixels; }
 
 void image::write_to_file_ppm(const std::string &filename) const
 {
@@ -40,8 +56,9 @@ void image::write_to_file_ppm(const std::string &filename) const
     {
         for (int x = 0; x < image_width; ++x)
         {
-            const color &c = pixels[y * image_width + x];
-            write_color(file, c);
+            const color &c = get_pixel(x, y);
+
+            file << int(255.999 * c.r()) << ' ' << int(255.999 * c.g()) << ' ' << int(255.999 * c.b()) << '\n';
         }
     }
 }
@@ -51,26 +68,7 @@ void image::write_to_file_png(const std::string &filename) const
     assert(!filename.empty());
     assert(filename.find(".png") != std::string::npos);
 
-    std::vector<unsigned char> data(image_width * image_height * 3);
-
-    for (int y = image_height - 1; y >= 0; --y)
-    {
-        for (int x = 0; x < image_width; ++x)
-        {
-            const color &c = pixels[y * image_width + x];
-            int index = offset(x, y) * 3;
-
-            double r = std::min(1., c.r());
-            double g = std::min(1., c.g());
-            double b = std::min(1., c.b());
-
-            data[index + 0] = static_cast<unsigned char>(255.999 * r);
-            data[index + 1] = static_cast<unsigned char>(255.999 * g);
-            data[index + 2] = static_cast<unsigned char>(255.999 * b);
-        }
-    }
-
-    stbi_write_png(filename.c_str(), image_width, image_height, 3, data.data(), 0);
+    stbi_write_png(filename.c_str(), image_width, image_height, 4, pixels, 0);
 
     std::cout << "Image saved to " << filename << std::endl;
 }

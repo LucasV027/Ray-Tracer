@@ -1,12 +1,10 @@
 #pragma once
 
-#include "vec3.h"
-
 #include <iostream>
 
-using color = vec3;
+#include "vec3.h"
 
-void write_color(std::ostream &out, const color &pixel_color);
+using color = vec3;
 
 namespace colors
 {
