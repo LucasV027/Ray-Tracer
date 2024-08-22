@@ -29,8 +29,7 @@ image::~image()
 int image::width() const { return image_width; }
 int image::height() const { return image_height; }
 double image::get_aspect_ratio() const { return aspect_ratio; }
-
-int image::offset(int x, int y) const { return (y * image_width + x) * 4; }
+uint8_t *image::get_pixels() const { return pixels; }
 
 void image::set_pixel(int x, int y, const color &c)
 {
@@ -39,6 +38,7 @@ void image::set_pixel(int x, int y, const color &c)
     pixels[offset(x, y) + 2] = static_cast<unsigned char>(255.999 * c.b());
     pixels[offset(x, y) + 3] = 255;
 }
+
 color image::get_pixel(int x, int y) const
 {
     double r = pixels[offset(x, y) + 0] / 255.0;
@@ -48,7 +48,21 @@ color image::get_pixel(int x, int y) const
     return color{r, g, b};
 }
 
-uint8_t *image::get_pixels() const { return pixels; }
+void image::write_to_file(const std::string &filename) const
+{
+    if (filename.find(".ppm") != std::string::npos)
+    {
+        write_to_file_ppm(filename);
+    }
+    else if (filename.find(".png") != std::string::npos)
+    {
+        write_to_file_png(filename);
+    }
+    else
+    {
+        std::cerr << "Cannot write to file " << filename << ". Unsupported file format." << std::endl;
+    }
+}
 
 void image::write_to_file_ppm(const std::string &filename) const
 {
@@ -80,3 +94,5 @@ void image::write_to_file_png(const std::string &filename) const
 
     std::cout << "Image saved to " << filename << std::endl;
 }
+
+int image::offset(int x, int y) const { return (y * image_width + x) * 4; }

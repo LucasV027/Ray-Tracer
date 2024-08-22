@@ -7,8 +7,7 @@ camera::camera(const settings &settings) : look_from(settings.lookfrom),
                                            anti_aliasing(settings.anti_aliasing),
                                            image_width(settings.image_width),
                                            image_height(int(image_width / settings.aspect_ratio)),
-                                           aspect_ratio(settings.aspect_ratio),
-                                           img(image(image_width, aspect_ratio))
+                                           aspect_ratio(settings.aspect_ratio)
 {
     initialize();
 }
@@ -35,11 +34,11 @@ void camera::initialize()
     up_left_corner = viewport_upper_left + (delta_u / 2) + (delta_v / 2);
 }
 
-hittable_list &camera::scene() { return world; }
-void camera::scene(const hittable_list &scene) { world = scene; }
-
-void camera::render()
+void camera::render(image *img, std::function<color(const ray &)> ray_color_fn)
 {
+    assert(img->width() == image_width);
+    assert(img->height() == image_height);
+
     std::random_device hwseed;
     std::default_random_engine rng(hwseed());
     std::uniform_real_distribution<double> u;
@@ -59,35 +58,10 @@ void camera::render()
                 point3 pixel = up_left_corner + (delta_u * (i + ux)) + (delta_v * (j + uy));
                 vec3 dir = vec3::unit_vector(look_from.to(pixel));
 
-                acc += ray_color(ray(look_from, dir));
+                acc += ray_color_fn(ray(look_from, dir));
             }
 
-            img.set_pixel(i, j, acc / anti_aliasing);
+            img->set_pixel(i, j, acc / anti_aliasing);
         }
     }
-}
-
-void camera::write_to_file(const std::string &filename) const { img.write_to_file_png(filename); }
-
-color camera::ray_color(const ray &r) const
-{
-    auto closest = world.hit(r);
-
-    if (closest)
-    {
-        return world.compute_lighting(closest);
-    }
-
-    // Background
-    vec3 unit_direction = vec3::unit_vector(r.direction());
-    auto a = 0.5 * (unit_direction.y() + 1.0);
-    return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
-}
-
-uint8_t *camera::get_image() const { return img.get_pixels(); }
-
-void camera::move(const vec3 &offset)
-{
-    look_from += offset;
-    initialize();
 }

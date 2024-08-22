@@ -24,8 +24,10 @@ public:
     void add(const std::shared_ptr<hittable> &object);
     void add_light(const light &l);
 
+    const std::vector<light> &get_lights() const;
+
     hit_record hit(const ray &r) const;
-    color compute_lighting(const hit_record &hit) const;
+
 
 private:
     std::vector<std::shared_ptr<hittable>> objects;

@@ -18,16 +18,17 @@ public:
     int width() const;
     int height() const;
     double get_aspect_ratio() const;
-
-    int offset(int x, int y) const;
+    uint8_t *get_pixels() const;
 
     void set_pixel(int x, int y, const color &c);
     color get_pixel(int x, int y) const;
 
-    uint8_t *get_pixels() const;
+    void write_to_file(const std::string &filename) const;
 
+private:
     void write_to_file_ppm(const std::string &filename) const;
     void write_to_file_png(const std::string &filename) const;
+    int offset(int x, int y) const;
 
 private:
     int image_width;
