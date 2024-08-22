@@ -1,21 +1,28 @@
 #include "camera.h"
 
-camera::camera(const settings &settings) : origin(settings.lookfrom),
+camera::camera(const settings &settings) : look_from(settings.lookfrom),
+                                           look_at(settings.lookat),
+                                           vup(settings.vup),
+                                           vfov(settings.vfov),
                                            anti_aliasing(settings.anti_aliasing),
                                            image_width(settings.image_width),
                                            image_height(int(image_width / settings.aspect_ratio)),
                                            aspect_ratio(settings.aspect_ratio),
                                            img(image(image_width, aspect_ratio))
 {
+    initialize();
+}
 
-    auto focal_length = (settings.lookat.to(settings.lookfrom)).length();
-    auto theta = math::degrees_to_radians(settings.vfov);
+void camera::initialize()
+{
+    auto focal_length = (look_at.to(look_from)).length();
+    auto theta = math::degrees_to_radians(vfov);
     auto h = std::tan(theta / 2);
     auto viewport_height = 2 * h * focal_length;
     auto viewport_width = viewport_height * (double(image_width) / image_height);
 
-    w = vec3::unit_vector(settings.lookat.to(settings.lookfrom));
-    u = vec3::unit_vector(vec3::cross(settings.vup, w));
+    w = vec3::unit_vector(look_at.to(look_from));
+    u = vec3::unit_vector(vec3::cross(vup, w));
     v = vec3::cross(w, u);
 
     vec3 viewport_u = viewport_width * u;   // Vector across viewport horizontal edge
@@ -24,7 +31,7 @@ camera::camera(const settings &settings) : origin(settings.lookfrom),
     delta_u = viewport_u / image_width;
     delta_v = viewport_v / image_height;
 
-    auto viewport_upper_left = origin - (focal_length * w) - viewport_u / 2 - viewport_v / 2;
+    auto viewport_upper_left = look_from - (focal_length * w) - viewport_u / 2 - viewport_v / 2;
     up_left_corner = viewport_upper_left + (delta_u / 2) + (delta_v / 2);
 }
 
@@ -33,7 +40,6 @@ void camera::scene(const hittable_list &scene) { world = scene; }
 
 void camera::render()
 {
-
     std::random_device hwseed;
     std::default_random_engine rng(hwseed());
     std::uniform_real_distribution<double> u;
@@ -51,9 +57,9 @@ void camera::render()
                 double uy = (u(rng) - 0.5);
 
                 point3 pixel = up_left_corner + (delta_u * (i + ux)) + (delta_v * (j + uy));
-                vec3 dir = vec3::unit_vector(origin.to(pixel));
+                vec3 dir = vec3::unit_vector(look_from.to(pixel));
 
-                acc += ray_color(ray(origin, dir));
+                acc += ray_color(ray(look_from, dir));
             }
 
             img.set_pixel(i, j, acc / anti_aliasing);
@@ -79,3 +85,9 @@ color camera::ray_color(const ray &r) const
 }
 
 uint8_t *camera::get_image() const { return img.get_pixels(); }
+
+void camera::move(const vec3 &offset)
+{
+    look_from += offset;
+    initialize();
+}

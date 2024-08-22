@@ -3,6 +3,14 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
+image::image()
+    : image_width(0),
+      image_height(0),
+      aspect_ratio(0),
+      pixels(nullptr)
+{
+}
+
 image::image(int width, double aspect_ratio)
     : image_width(width),
       image_height(int(image_width / aspect_ratio)),

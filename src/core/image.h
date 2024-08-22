@@ -11,6 +11,7 @@
 class image
 {
 public:
+    image();
     image(int width, double aspect_ratio);
     ~image();
 

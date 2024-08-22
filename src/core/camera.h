@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 #include <random>
+#include <unistd.h>
 
 #include "utils/vec3.h"
 #include "image.h"
@@ -32,6 +33,8 @@ public:
 
 public:
     camera(const settings &settings);
+    void initialize();
+
     hittable_list &scene();
     void scene(const hittable_list &scene);
 
@@ -41,12 +44,18 @@ public:
 
     uint8_t *get_image() const;
 
+    void move(const vec3 &offset);
+
 private:
     color ray_color(const ray &r) const;
 
 private:
     // Camera
-    point3 origin;
+    point3 look_from;
+    point3 look_at;
+    vec3 vup;
+    double vfov;
+
     point3 up_left_corner;
     vec3 u;
     vec3 v;

@@ -1,34 +1,29 @@
 #pragma once
 
+#include <thread>
+#include <memory>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 
-#include "core/camera.h"
-
-#include "shapes/hittable.h"
-#include "shapes/sphere.h"
-#include "shapes/plan.h"
-#include "shapes/light.h"
+#include "renderer.h"
 
 class app
 {
 public:
     app(const camera::settings &settings);
 
-    void render();
+    void events();
     void run();
     ~app();
 
 private:
     // SFML
     sf::RenderWindow window;
-    sf::Image image;
-    sf::Texture texture;
+    sf::Event event;
     //
-
-    camera cam;
     int screen_width;
     int screen_height;
-    bool should_render = true;
+    std::unique_ptr<renderer> mt_renderer;
 };
