@@ -39,6 +39,20 @@ void image::set_pixel(int x, int y, const color &c)
     pixels[offset(x, y) + 3] = 255;
 }
 
+void image::set_pixel(int x, int y, const color &c, int samples)
+{
+    if (samples == 0)
+    {
+        set_pixel(x, y, c);
+    }
+    else
+    {
+        auto actual = get_pixel(x, y);
+        auto new_mean = (actual * samples + c) / (samples + 1);
+        set_pixel(x, y, new_mean);
+    }
+}
+
 color image::get_pixel(int x, int y) const
 {
     double r = pixels[offset(x, y) + 0] / 255.0;
@@ -46,6 +60,17 @@ color image::get_pixel(int x, int y) const
     double b = pixels[offset(x, y) + 2] / 255.0;
 
     return color{r, g, b};
+}
+
+void image::clear(const color &c)
+{
+    for (int y = 0; y < image_height; ++y)
+    {
+        for (int x = 0; x < image_width; ++x)
+        {
+            set_pixel(x, y, c);
+        }
+    }
 }
 
 void image::write_to_file(const std::string &filename) const

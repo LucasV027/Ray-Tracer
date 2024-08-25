@@ -21,7 +21,10 @@ public:
     uint8_t *get_pixels() const;
 
     void set_pixel(int x, int y, const color &c);
+    void set_pixel(int x, int y, const color &c, int samples);
     color get_pixel(int x, int y) const;
+
+    void clear(const color &c);
 
     void write_to_file(const std::string &filename) const;
 

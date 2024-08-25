@@ -1,22 +1,15 @@
 #pragma once
 
-#include <algorithm>
-#include <string>
-#include <random>
-#include <unistd.h>
+#include <functional>
 
 #include "utils/vec3.h"
-#include "image.h"
 #include "utils/ray.h"
 #include "utils/color.h"
 #include "utils/math.h"
 
-// Shapes
-#include "core/scene.h"
-#include "shapes/hittable.h"
-#include "shapes/light.h"
+#include "core/image.h"
 
-class camera
+class fix_camera
 {
 public:
     struct settings
@@ -33,12 +26,14 @@ public:
     };
 
 public:
-    camera(const settings &settings);
-    void initialize();
+    fix_camera(const settings &settings);
 
-    void render(image *img, std::function<color(const ray &)> ray_color_fn);
+    void render(std::function<color(const ray &)> ray_color_fn);
+
+    const image &get_image() const { return img; }
 
 private:
+    // Camera settings
     point3 look_from;
     point3 look_at;
     vec3 vup;
@@ -55,7 +50,6 @@ private:
     vec3 delta_u;
     vec3 delta_v;
 
-    int image_width;
-    int image_height;
-    double aspect_ratio;
+    // Image settings
+    image img;
 };

@@ -33,6 +33,9 @@ public:
     vec3 operator*(double t) const;
     vec3 operator/(double t) const;
 
+    bool operator==(const vec3 &v) const;
+    bool operator!=(const vec3 &v) const;
+
     friend vec3 operator*(double t, const vec3 &v);
     friend vec3 operator/(double t, const vec3 &v);
 

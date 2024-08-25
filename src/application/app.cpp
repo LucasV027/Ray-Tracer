@@ -1,13 +1,12 @@
 #include "app.h"
 
-app::app(const camera::settings &settings)
+app::app(int width, double aspect_ratio) : screen_width(width),
+                                           screen_height(int(width / aspect_ratio)),
+                                           cam(width, aspect_ratio),
+                                           img(width, aspect_ratio)
 {
-    screen_width = settings.image_width;
-    screen_height = int(settings.image_width / settings.aspect_ratio);
-
-    window.create(sf::VideoMode(screen_width, screen_height), "Ray Tracer");
-
-    mt_renderer = std::make_unique<renderer>(&window, settings);
+    window.create(sf::VideoMode(screen_width, screen_height), "Ray-Tracer");
+    texture.create(window.getSize().x, window.getSize().y);
 }
 
 void app::events()
@@ -16,7 +15,23 @@ void app::events()
     {
         if (event.type == sf::Event::Closed)
             window.close();
+
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (event.key.code == sf::Keyboard::Q)
+                window.close();
+        }
     }
+}
+
+void app::render()
+{
+    texture.update(img.get_pixels());
+    sf::Sprite sprite(texture);
+
+    window.clear(sf::Color::White);
+    window.draw(sprite);
+    window.display();
 }
 
 void app::run()
@@ -24,7 +39,7 @@ void app::run()
     while (window.isOpen())
     {
         events();
-        mt_renderer->render();
+        render();
     }
 }
 
