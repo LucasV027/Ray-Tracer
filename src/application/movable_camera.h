@@ -50,4 +50,6 @@ private:
     double aspect_ratio;
 
     int samples;
+
+    bool stop_computing = false;
 };

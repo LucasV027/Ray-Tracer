@@ -16,6 +16,8 @@ class app
 public:
     app(int width, double aspect_ratio);
 
+    void compute();
+
     void events();
     void render();
 
@@ -37,5 +39,5 @@ private:
     image img;
     scene world;
 
-    bool once = false;
+    int max_samples = 64;
 };

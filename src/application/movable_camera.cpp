@@ -38,14 +38,15 @@ void movable_camera::initialize()
 void movable_camera::move_origin(const vec3 &offset)
 {
     look_from += offset;
-    look_at += offset;
     initialize();
+    stop_computing = true;
 }
 
 void movable_camera::move_target(const vec3 &offset)
 {
     look_at += offset;
     initialize();
+    stop_computing = true;
 }
 
 int movable_camera::samples_taken() const
@@ -70,6 +71,12 @@ void movable_camera::render_acc(image *img, std::function<color(const ray &)> ra
             ray r(look_from, dir);
 
             img->set_pixel(i, j, ray_color_fn(r), samples);
+
+            if (stop_computing)
+            {
+                stop_computing = false;
+                return;
+            }
         }
     }
 
