@@ -6,7 +6,6 @@
 
 #include <SFML/Graphics.hpp>
 
-
 #include "core/camera.h"
 #include "core/image.h"
 #include "core/scene.h"
@@ -38,6 +37,6 @@ private:
     camera cam;
     scene world;
 
-    int max_samples = 64;
+    int max_samples = 100;
     bool computing = true;
 };

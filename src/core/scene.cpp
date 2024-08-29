@@ -11,8 +11,13 @@ color scene::ray_color(const ray &r, int n) const
 
     if (closest)
     {
-        auto dir = vec3::random_in_semi_sphere(closest.normal);
-        return 0.5 * closest.col * ray_color(ray(closest.point + 0.001 * closest.normal, dir), n - 1);
+        color attenuation;
+        ray scattered;
+
+        if (closest.mat->scatter(r, closest, attenuation, scattered))
+            return attenuation * ray_color(scattered, n - 1);
+
+        return color(0., 0., 0.);
     }
 
     return background(r);

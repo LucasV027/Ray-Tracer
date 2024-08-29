@@ -86,7 +86,9 @@ void image::write_to_file(const std::string &filename) const
     else
     {
         std::cerr << "Cannot write to file " << filename << ". Unsupported file format." << std::endl;
+        return;
     }
+    std::cout << "Image saved to " << filename << std::endl;
 }
 
 void image::write_to_file_ppm(const std::string &filename) const
@@ -116,8 +118,6 @@ void image::write_to_file_png(const std::string &filename) const
     assert(filename.find(".png") != std::string::npos);
 
     stbi_write_png(filename.c_str(), image_width, image_height, 4, pixels, 0);
-
-    std::cout << "Image saved to " << filename << std::endl;
 }
 
 int image::offset(int x, int y) const { return (y * image_width + x) * 4; }

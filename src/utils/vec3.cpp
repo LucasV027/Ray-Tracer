@@ -123,6 +123,11 @@ vec3 vec3::random_in_semi_sphere(const vec3 &normal)
         return -random;
 }
 
+vec3 vec3::reflect(const vec3 &v, const vec3 &n)
+{
+    return v - 2 * dot(v, n) * n;
+}
+
 std::ostream &operator<<(std::ostream &out, const vec3 &v)
 {
     return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];

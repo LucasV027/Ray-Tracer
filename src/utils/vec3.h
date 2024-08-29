@@ -50,6 +50,7 @@ public:
 
     static vec3 random();
     static vec3 random_in_semi_sphere(const vec3 &normal);
+    static vec3 reflect(const vec3 &v, const vec3 &n);
 
     friend std::ostream &operator<<(std::ostream &out, const vec3 &v);
 

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+
+#include "materials/material.h"
 #include "shapes/hittable.h"
 
 #include "utils/vec3.h"
@@ -9,12 +12,13 @@
 class sphere : public hittable
 {
 public:
-    sphere(const point3 &center, double radius, const color &col);
+    sphere(const point3 &center, double radius, std::shared_ptr<material> mat);
 
     hit_record hit(const ray &r) const override;
 
 private:
     point3 center;
     double radius;
-    color col;
+
+    std::shared_ptr<material> mat;
 };

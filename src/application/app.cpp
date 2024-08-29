@@ -7,10 +7,16 @@ app::app(const camera::settings &settings) : screen_width(settings.image_width),
     window.create(sf::VideoMode(screen_width, screen_height), "Ray-Tracer");
     texture.create(window.getSize().x, window.getSize().y);
 
-    world.get_objects().add(std::make_shared<plan>(point3(0, -1, 0), vec3(0, 1, 0), color(0.5, 0.5, 0.5)));
-    world.get_objects().add(std::make_shared<sphere>(point3(0, 0, -7), 2., colors::red));
-    world.get_objects().add(std::make_shared<sphere>(point3(2, 0, -7), 1., colors::green));
-    world.get_objects().add(std::make_shared<sphere>(point3(-2, 0, -7), 1., colors::blue));
+    auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
+    auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
+    auto material_left = std::make_shared<metal>(color(0.8, 0.8, 0.8));
+    auto material_right = std::make_shared<metal>(color(0.8, 0.6, 0.2));
+
+    world.get_objects().add(std::make_shared<plan>(point3(0, -1, 0), vec3(0, 1, 0), material_ground));
+
+    world.get_objects().add(std::make_shared<sphere>(point3(0, 0, -7), 2., material_center));
+    world.get_objects().add(std::make_shared<sphere>(point3(2, 0, -7), 1., material_left));
+    world.get_objects().add(std::make_shared<sphere>(point3(-2, 0, -7), 1., material_right));
 }
 
 void app::compute()
@@ -22,19 +28,20 @@ void app::compute()
         if (cam.get_samples() < max_samples)
         {
             cam.render([&](const ray &r) -> color
-                       { return world.ray_color(r, 10); });
+                       { return world.ray_color(r, 50); });
         }
         else
         {
-            auto end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> elapsed = end - start;
-            std::cout << "Samples: " << cam.get_samples() << std::endl;
-            std::cout << "Compute thread finished in " << elapsed.count() << " seconds" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Sleep for 1 second to make sure the last frame is displayed
-            computing = false;
-            return;
+            break;
         }
     }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    std::cout << "Samples: " << cam.get_samples() << std::endl;
+    std::cout << "Compute thread finished in " << elapsed.count() << " seconds" << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Sleep for 1 second to make sure the last frame is displayed
+    computing = false;
 }
 
 void app::events()
@@ -51,6 +58,9 @@ void app::events()
 
             if (event.key.code == sf::Keyboard::Q)
                 window.close();
+
+            if (event.key.code == sf::Keyboard::S)
+                cam.get_image().write_to_file("../output.png");
         }
     }
 }
@@ -71,13 +81,14 @@ void app::render()
 void app::run()
 {
     std::thread compute_thread(&app::compute, this);
-    compute_thread.detach();
 
     while (window.isOpen())
     {
         events();
         render();
     }
+
+    compute_thread.join(); // Wait for the compute thread to finish
 }
 
 app::~app()

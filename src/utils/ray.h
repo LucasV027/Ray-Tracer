@@ -1,13 +1,17 @@
 #pragma once
 
 #include <limits>
+#include <memory>
 
 #include "utils/vec3.h"
 #include "utils/color.h"
 
+class material;
+
 class ray
 {
 public:
+    ray() {}
     ray(const point3 &origin, const vec3 &direction);
     point3 at(double t) const;
     vec3 direction() const;
@@ -25,10 +29,11 @@ struct hit_record
     point3 point;
     vec3 normal;
     double t;
-    color col;
 
-    hit_record() : point(), normal(), t(infinity), col() {}
-    hit_record(point3 point, vec3 normal, double t, color color) : point(point), normal(normal), t(t), col(color) {}
+    std::shared_ptr<material> mat;
 
-    operator bool() const { return t >= 0 && t < infinity; }
+    hit_record() : point(), normal(), t(infinity), mat(nullptr) {}
+    hit_record(point3 point, vec3 normal, double t, std::shared_ptr<material> mat) : point(point), normal(normal), t(t), mat(mat) {}
+
+    operator bool() const { return t >= 0.001 && t < infinity; }
 };
