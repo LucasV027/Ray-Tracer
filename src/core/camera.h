@@ -9,7 +9,7 @@
 
 #include "core/image.h"
 
-class fix_camera
+class camera
 {
 public:
     struct settings
@@ -26,14 +26,14 @@ public:
     };
 
 public:
-    fix_camera(const settings &settings);
+    camera(const settings &settings);
 
     void render(std::function<color(const ray &)> ray_color_fn);
 
     const image &get_image() const { return img; }
+    int get_samples() const { return samples; }
 
 private:
-    // Camera settings
     point3 look_from;
     point3 look_at;
     vec3 vup;
@@ -50,6 +50,6 @@ private:
     vec3 delta_u;
     vec3 delta_v;
 
-    // Image settings
     image img;
+    int samples;
 };

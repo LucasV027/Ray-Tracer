@@ -1,7 +1,7 @@
 #pragma once
 
 #include "shapes/hittable.h"
-#include "shapes/light.h"
+
 #include "shapes/plan.h"
 #include "shapes/sphere.h"
 
@@ -9,10 +9,12 @@ class scene
 {
 public:
     scene() = default;
+    hittable_list &get_objects();
 
-    color ray_color(const ray &r) const;
-    color compute_lighting(const hit_record &hit) const;
+    color ray_color(const ray &r, int n) const;
 
-public:
+    static color background(const ray &r);
+
+private:
     hittable_list objects;
 };

@@ -1,11 +1,12 @@
-#include "fix_camera.h"
+#include "camera.h"
 
-fix_camera::fix_camera(const settings &settings) : look_from(settings.lookfrom),
-                                                   look_at(settings.lookat),
-                                                   vup(settings.vup),
-                                                   vfov(settings.vfov),
-                                                   anti_aliasing(settings.anti_aliasing),
-                                                   img(settings.image_width, settings.aspect_ratio)
+camera::camera(const settings &settings) : look_from(settings.lookfrom),
+                                           look_at(settings.lookat),
+                                           vup(settings.vup),
+                                           vfov(settings.vfov),
+                                           anti_aliasing(settings.anti_aliasing),
+                                           img(settings.image_width, settings.aspect_ratio),
+                                           samples(0)
 {
     auto focal_length = (look_at.to(look_from)).length();
     auto theta = math::degrees_to_radians(vfov);
@@ -27,7 +28,7 @@ fix_camera::fix_camera(const settings &settings) : look_from(settings.lookfrom),
     up_left_corner = viewport_upper_left + (delta_u / 2) + (delta_v / 2);
 }
 
-void fix_camera::render(std::function<color(const ray &)> ray_color_fn)
+void camera::render(std::function<color(const ray &)> ray_color_fn)
 {
 #pragma omp parallel for schedule(dynamic, 1)
     for (int j = 0; j < img.height(); j++)
@@ -47,7 +48,9 @@ void fix_camera::render(std::function<color(const ray &)> ray_color_fn)
                 acc += ray_color_fn(ray(look_from, dir));
             }
 
-            img.set_pixel(i, j, acc / anti_aliasing);
+            img.set_pixel(i, j, acc / anti_aliasing, samples);
         }
     }
+
+    samples += anti_aliasing;
 }

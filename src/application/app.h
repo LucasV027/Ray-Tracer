@@ -6,15 +6,15 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "application/movable_camera.h"
 
+#include "core/camera.h"
 #include "core/image.h"
 #include "core/scene.h"
 
 class app
 {
 public:
-    app(int width, double aspect_ratio);
+    app(const camera::settings &settings);
 
     void compute();
 
@@ -35,9 +35,9 @@ private:
     int screen_height;
 
     // Core
-    movable_camera cam;
-    image img;
+    camera cam;
     scene world;
 
     int max_samples = 64;
+    bool computing = true;
 };
