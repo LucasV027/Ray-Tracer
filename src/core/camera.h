@@ -23,6 +23,7 @@ public:
         double vfov = 90;               // Vertical field of view in degrees
 
         int anti_aliasing = 5;
+        int depth = 50;
     };
 
 public:

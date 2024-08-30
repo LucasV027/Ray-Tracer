@@ -37,6 +37,6 @@ private:
     camera cam;
     scene world;
 
+    int max_depth;
     int max_samples = 100;
-    bool computing = true;
 };

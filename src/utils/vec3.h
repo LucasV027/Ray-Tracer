@@ -49,6 +49,7 @@ public:
     vec3 to(const vec3 &v) const;
 
     static vec3 random();
+    static vec3 random_unit_vector();
     static vec3 random_in_semi_sphere(const vec3 &normal);
     static vec3 reflect(const vec3 &v, const vec3 &n);
 

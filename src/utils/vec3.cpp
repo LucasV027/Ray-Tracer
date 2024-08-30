@@ -114,6 +114,12 @@ vec3 vec3::to(const vec3 &v) const
 }
 
 vec3 vec3::random() { return vec3(math::random_double(), math::random_double(), math::random_double()); }
+
+vec3 vec3::random_unit_vector()
+{
+    return unit_vector(vec3::random());
+}
+
 vec3 vec3::random_in_semi_sphere(const vec3 &normal)
 {
     vec3 random = vec3::random();

@@ -2,21 +2,16 @@
 
 app::app(const camera::settings &settings) : screen_width(settings.image_width),
                                              screen_height(int(screen_width / settings.aspect_ratio)),
-                                             cam(settings)
+                                             cam(settings),
+                                             max_depth(settings.depth),
+                                             world(basic_scene::default_scene)
 {
     window.create(sf::VideoMode(screen_width, screen_height), "Ray-Tracer");
+    window.setFramerateLimit(60);
+    window.setPosition(sf::Vector2i(sf::VideoMode::getDesktopMode().width / 2 - 400,
+                                    sf::VideoMode::getDesktopMode().height / 2 - 320));
+
     texture.create(window.getSize().x, window.getSize().y);
-
-    auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
-    auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
-    auto material_left = std::make_shared<metal>(color(0.8, 0.8, 0.8));
-    auto material_right = std::make_shared<metal>(color(0.8, 0.6, 0.2));
-
-    world.get_objects().add(std::make_shared<plan>(point3(0, -1, 0), vec3(0, 1, 0), material_ground));
-
-    world.get_objects().add(std::make_shared<sphere>(point3(0, 0, -7), 2., material_center));
-    world.get_objects().add(std::make_shared<sphere>(point3(2, 0, -7), 1., material_left));
-    world.get_objects().add(std::make_shared<sphere>(point3(-2, 0, -7), 1., material_right));
 }
 
 void app::compute()
@@ -28,7 +23,7 @@ void app::compute()
         if (cam.get_samples() < max_samples)
         {
             cam.render([&](const ray &r) -> color
-                       { return world.ray_color(r, 50); });
+                       { return world.ray_color(r, max_depth); });
         }
         else
         {
@@ -40,8 +35,6 @@ void app::compute()
     std::chrono::duration<double> elapsed = end - start;
     std::cout << "Samples: " << cam.get_samples() << std::endl;
     std::cout << "Compute thread finished in " << elapsed.count() << " seconds" << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Sleep for 1 second to make sure the last frame is displayed
-    computing = false;
 }
 
 void app::events()
@@ -67,9 +60,6 @@ void app::events()
 
 void app::render()
 {
-    if (!computing)
-        return;
-
     texture.update(cam.get_image().get_pixels());
     sf::Sprite sprite(texture);
 

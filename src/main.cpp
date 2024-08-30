@@ -3,8 +3,13 @@
 #include <memory>
 
 #include "core/scene.h"
+#include "core/camera.h"
 
+#define SFML
+
+#ifdef SFML
 #include "application/app.h"
+#endif
 
 int main(void)
 {
@@ -14,23 +19,21 @@ int main(void)
     cam_settings.vup = vec3(0, 1, 0);
     cam_settings.aspect_ratio = 16. / 9.;
     cam_settings.image_width = 800;
+    cam_settings.depth = 50;
+
+#ifdef SFML
     cam_settings.anti_aliasing = 1;
-
-#ifdef FIX_CAMERA
-    cam_settings.anti_aliasing = 40;
-
-    scene world;
-
-    world.get_objects().add(std::make_shared<plan>(point3(0, -1, 0), vec3(0, 1, 0), color(0.5, 0.5, 0.5)));
-    world.get_objects().add(std::make_shared<sphere>(point3(0, 0, -7), 2., colors::red));
-
-    fix_camera cam(cam_settings);
-    cam.render([&](const ray &r) -> color
-               { return world.ray_color(r); });
-
-    cam.get_image().write_to_file("output.png");
-#else
     app app(cam_settings);
     app.run();
+#else
+    cam_settings.anti_aliasing = 40;
+
+    scene world(basic_scene::default_scene);
+
+    camera cam(cam_settings);
+    cam.render([&](const ray &r) -> color
+               { return world.ray_color(r, cam_settings.depth); });
+
+    cam.get_image().write_to_file("output.png");
 #endif
 }
