@@ -4,7 +4,7 @@ namespace math
 {
     double degrees_to_radians(double degrees)
     {
-        return degrees * M_PI / 180.0;
+        return degrees * PI / 180.0;
     }
 
     double random_double()
