@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef LIB_SFML
+
 #include <thread>
 #include <memory>
 #include <cassert>
@@ -40,3 +42,5 @@ private:
     int max_depth;
     int max_samples = 100;
 };
+
+#endif

@@ -30,7 +30,9 @@ camera::camera(const settings &settings) : look_from(settings.lookfrom),
 
 void camera::render(std::function<color(const ray &)> ray_color_fn)
 {
-#pragma omp parallel for schedule(dynamic, 1)
+#ifdef LIB_OPENMP
+    #pragma omp parallel for schedule(dynamic, 1)
+#endif
     for (int j = 0; j < img.height(); j++)
     {
         for (int i = 0; i < img.width(); i++)

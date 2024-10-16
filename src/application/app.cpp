@@ -1,5 +1,7 @@
 #include "app.h"
 
+#ifdef LIB_SFML
+
 app::app(const camera::settings &settings) : screen_width(settings.image_width),
                                              screen_height(int(screen_width / settings.aspect_ratio)),
                                              cam(settings),
@@ -85,3 +87,5 @@ app::~app()
 {
     window.close();
 }
+
+#endif

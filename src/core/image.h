@@ -29,8 +29,8 @@ public:
     void write_to_file(const std::string &filename) const;
 
 private:
-    void write_to_file_ppm(const std::string &filename) const;
-    void write_to_file_png(const std::string &filename) const;
+    bool write_to_file_ppm(const std::string &filename) const;
+    bool write_to_file_png(const std::string &filename) const;
     int offset(int x, int y) const;
 
 private:
