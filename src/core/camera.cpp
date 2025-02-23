@@ -1,5 +1,8 @@
 #include "camera.h"
 
+#include <utils/math.h>
+#include <cmath>
+
 camera::camera(const settings &settings) : look_from(settings.lookfrom),
                                            look_at(settings.lookat),
                                            vup(settings.vup),
@@ -12,30 +15,30 @@ camera::camera(const settings &settings) : look_from(settings.lookfrom),
     auto theta = math::degrees_to_radians(vfov);
     auto h = std::tan(theta / 2);
     auto viewport_height = 2 * h * focal_length;
-    auto viewport_width = viewport_height * (double(img.width()) / img.height());
+    auto viewport_width = viewport_height * (static_cast<double>(img.width()) / img.height());
 
     w = vec3::unit_vector(look_at.to(look_from));
     u = vec3::unit_vector(vec3::cross(vup, w));
     v = vec3::cross(w, u);
 
-    vec3 viewport_u = viewport_width * u;   // Vector across viewport horizontal edge
-    vec3 viewport_v = viewport_height * -v; // Vector down viewport vertical edge
+    const vec3 viewport_u = viewport_width * u;   // Vector across viewport horizontal edge
+    const vec3 viewport_v = viewport_height * -v; // Vector down viewport vertical edge
 
     delta_u = viewport_u / img.width();
     delta_v = viewport_v / img.height();
 
-    auto viewport_upper_left = look_from - (focal_length * w) - viewport_u / 2 - viewport_v / 2;
+    const auto viewport_upper_left = look_from - (focal_length * w) - viewport_u / 2 - viewport_v / 2;
     up_left_corner = viewport_upper_left + (delta_u / 2) + (delta_v / 2);
 }
 
-void camera::render(std::function<color(const ray &)> ray_color_fn)
+void camera::render(const std::function<color(const ray &)>& ray_color_fn)
 {
 #ifdef LIB_OPENMP
     #pragma omp parallel for schedule(dynamic, 1)
 #endif
-    for (int j = 0; j < img.height(); j++)
+    for (unsigned int j = 0; j < img.height(); j++)
     {
-        for (int i = 0; i < img.width(); i++)
+        for ( unsigned int i = 0; i < img.width(); i++)
         {
             color acc = colors::black;
 

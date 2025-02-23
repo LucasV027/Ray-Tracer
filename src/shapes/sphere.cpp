@@ -1,15 +1,19 @@
 #include "sphere.h"
 
-sphere::sphere(const point3 &center, double radius, std::shared_ptr<material> mat) : center(center), radius(radius), mat(mat) {}
+#include <utility>
+#include <cmath>
 
-hit_record sphere::hit(const ray &r) const
-{
-    vec3 oc = r.origin().to(center);
-    auto a = r.direction().length_squared();
-    auto h = vec3::dot(r.direction(), oc);
-    auto c = oc.length_squared() - radius * radius;
+sphere::sphere(const point3 &center, const double radius, std::shared_ptr<material> mat) : center(center), radius(radius),
+                                                                                           mat(std::move(mat)) {
+}
 
-    auto discriminant = h * h - a * c;
+hit_record sphere::hit(const ray &r) const {
+    const vec3 oc = r.origin().to(center);
+    const auto a = r.direction().length_squared();
+    const auto h = vec3::dot(r.direction(), oc);
+    const auto c = oc.length_squared() - radius * radius;
+
+    const auto discriminant = h * h - a * c;
 
     if (discriminant < 0)
         return {};
@@ -17,8 +21,7 @@ hit_record sphere::hit(const ray &r) const
     auto sqrtd = std::sqrt(discriminant);
 
     auto root = (h - sqrtd) / a;
-    if (root < 0.)
-    {
+    if (root < 0.) {
         root = (h + sqrtd) / a;
         if (root < 0.)
             return {};

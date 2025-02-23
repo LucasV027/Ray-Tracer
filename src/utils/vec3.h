@@ -1,12 +1,8 @@
 #pragma once
 
-#include <cmath>
 #include <iostream>
 
-#include "math.h"
-
-class vec3
-{
+class vec3 {
 public:
     vec3();
     vec3(double e0, double e1, double e2);
@@ -20,6 +16,7 @@ public:
     double b() const;
 
     vec3 operator-() const;
+
     double operator[](int i) const;
     double &operator[](int i);
 
@@ -39,15 +36,13 @@ public:
     friend vec3 operator*(double t, const vec3 &v);
     friend vec3 operator/(double t, const vec3 &v);
 
+    double length() const;
+    double length_squared() const;
+    vec3 to(const vec3 &v) const;
+
     static double dot(const vec3 &u, const vec3 &v);
     static vec3 cross(const vec3 &u, const vec3 &v);
     static vec3 unit_vector(const vec3 &v);
-
-    double length() const;
-    double length_squared() const;
-
-    vec3 to(const vec3 &v) const;
-
     static vec3 random();
     static vec3 random_unit_vector();
     static vec3 random_in_semi_sphere(const vec3 &normal);

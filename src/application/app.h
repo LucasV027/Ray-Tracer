@@ -2,38 +2,31 @@
 
 #ifdef LIB_SFML
 
-#include <thread>
-#include <memory>
-#include <cassert>
-
 #include <SFML/Graphics.hpp>
 
 #include "core/camera.h"
-#include "core/image.h"
 #include "core/scene.h"
 
-class app
-{
+class app {
 public:
-    app(const camera::settings &settings);
-
-    void compute();
-
-    void events();
-    void render();
+    explicit app(const camera::settings &settings);
+    ~app();
 
     void run();
 
-    ~app();
+private:
+    void compute();
+    void events();
+    void render();
 
 private:
     // SFML
     sf::RenderWindow window;
-    sf::Event event;
+    sf::Event event{};
     sf::Texture texture;
 
-    int screen_width;
-    int screen_height;
+    unsigned int screen_width;
+    unsigned int screen_height;
 
     // Core
     camera cam;

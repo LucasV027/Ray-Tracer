@@ -1,9 +1,13 @@
 #include "scene.h"
 
-scene::scene(basic_scene scene)
-{
-    if (scene == basic_scene::default_scene)
-    {
+#include <materials/material.h>
+#include <shapes/sphere.h>
+
+#include "materials/lambertian.h"
+#include "materials/metal.h"
+
+scene::scene(basic_scene scene) {
+    if (scene == basic_scene::default_scene) {
         auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
         auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
         auto material_left = std::make_shared<metal>(color(0.8, 0.8, 0.8));
@@ -18,15 +22,11 @@ scene::scene(basic_scene scene)
 
 hittable_list &scene::get_objects() { return objects; }
 
-color scene::ray_color(const ray &r, int n) const
-{
+color scene::ray_color(const ray &r, int n) const {
     if (n <= 0)
-        return color(0., 0., 0.);
+        return {0., 0., 0.};
 
-    auto closest = objects.hit(r);
-
-    if (closest)
-    {
+    if (const auto closest = objects.hit(r)) {
         color attenuation;
         ray scattered;
 
@@ -37,8 +37,7 @@ color scene::ray_color(const ray &r, int n) const
     return background(r);
 }
 
-color scene::background(const ray &r)
-{
+color scene::background(const ray &r) {
     vec3 unit_direction = vec3::unit_vector(r.direction());
     auto a = 0.5 * (unit_direction.y() + 1.0);
     return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);

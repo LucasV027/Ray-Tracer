@@ -6,11 +6,9 @@
 #include "shapes/hittable.h"
 
 #include "utils/vec3.h"
-#include "utils/color.h"
 #include "utils/ray.h"
 
-class sphere : public hittable
-{
+class sphere final : public hittable {
 public:
     sphere(const point3 &center, double radius, std::shared_ptr<material> mat);
 

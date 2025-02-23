@@ -3,18 +3,16 @@
 #include "shapes/hittable.h"
 
 #include "shapes/plan.h"
-#include "shapes/sphere.h"
+#include "utils/color.h"
 
-enum class basic_scene
-{
+enum class basic_scene {
     default_scene,
 };
 
-class scene
-{
+class scene {
 public:
     scene() = default;
-    scene(basic_scene scene);
+    explicit scene(basic_scene scene);
 
     hittable_list &get_objects();
 

@@ -1,41 +1,37 @@
 #pragma once
 
-#include <fstream>
-#include <cassert>
+
 #include <string>
-#include <vector>
-#include <stdint.h>
+#include <cstdint>
 
 #include "utils/color.h"
 
-class image
-{
+class image {
 public:
     image();
-    image(int width, double aspect_ratio);
+    image(unsigned int width, double aspect_ratio);
     ~image();
 
-    int width() const;
-    int height() const;
+    unsigned int width() const;
+    unsigned int height() const;
     double get_aspect_ratio() const;
     uint8_t *get_pixels() const;
+    color get_pixel(unsigned int x, unsigned int y) const;
 
-    void set_pixel(int x, int y, const color &c);
-    void set_pixel(int x, int y, const color &c, int samples);
-    color get_pixel(int x, int y) const;
+    void set_pixel(unsigned int x, unsigned int y, const color &c) const;
+    void set_pixel(unsigned int x, unsigned int y, const color &c, int samples) const;
 
-    void clear(const color &c);
-
+    void clear(const color &c) const;
     void write_to_file(const std::string &filename) const;
 
 private:
     bool write_to_file_ppm(const std::string &filename) const;
     bool write_to_file_png(const std::string &filename) const;
-    int offset(int x, int y) const;
+    unsigned int offset(unsigned int x, unsigned int y) const;
 
 private:
-    int image_width;
-    int image_height;
+    unsigned int image_width;
+    unsigned int image_height;
     double aspect_ratio;
     uint8_t *pixels;
 };

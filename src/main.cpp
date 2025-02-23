@@ -1,7 +1,6 @@
 #include "core/camera.h"
 #include "core/scene.h"
 
-
 #ifdef LIB_SFML
 #include "application/app.h"
 #endif

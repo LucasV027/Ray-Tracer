@@ -5,6 +5,10 @@
 #include "stb_image_write.h"
 #endif
 
+#include <fstream>
+#include <cassert>
+#include <vector>
+
 image::image()
     : image_width(0),
       image_height(0),
@@ -12,9 +16,9 @@ image::image()
       pixels(nullptr) {
 }
 
-image::image(int width, double aspect_ratio)
+image::image(const unsigned int width, const double aspect_ratio)
     : image_width(width),
-      image_height(int(image_width / aspect_ratio)),
+      image_height(static_cast<unsigned int>(image_width / aspect_ratio)),
       aspect_ratio(aspect_ratio) {
     assert(image_width > 0);
     assert(image_height > 0);
@@ -25,37 +29,37 @@ image::~image() {
     delete[] pixels;
 }
 
-int image::width() const { return image_width; }
-int image::height() const { return image_height; }
+unsigned int image::width() const { return image_width; }
+unsigned int image::height() const { return image_height; }
 double image::get_aspect_ratio() const { return aspect_ratio; }
 uint8_t *image::get_pixels() const { return pixels; }
 
-void image::set_pixel(int x, int y, const color &c) {
+void image::set_pixel(unsigned int x, unsigned int y, const color &c) const {
     pixels[offset(x, y) + 0] = static_cast<unsigned char>(255.999 * c.r());
     pixels[offset(x, y) + 1] = static_cast<unsigned char>(255.999 * c.g());
     pixels[offset(x, y) + 2] = static_cast<unsigned char>(255.999 * c.b());
     pixels[offset(x, y) + 3] = 255;
 }
 
-void image::set_pixel(int x, int y, const color &c, int samples) {
+void image::set_pixel(const unsigned int x, const unsigned int y, const color &c, const int samples) const {
     if (samples == 0) {
         set_pixel(x, y, c);
     } else {
-        auto actual = get_pixel(x, y);
-        auto new_mean = (actual * samples + c) / (samples + 1);
+        const auto actual = get_pixel(x, y);
+        const auto new_mean = (actual * samples + c) / (samples + 1);
         set_pixel(x, y, new_mean);
     }
 }
 
-color image::get_pixel(int x, int y) const {
-    double r = pixels[offset(x, y) + 0] / 255.0;
-    double g = pixels[offset(x, y) + 1] / 255.0;
-    double b = pixels[offset(x, y) + 2] / 255.0;
+color image::get_pixel(unsigned int x, unsigned int y) const {
+    const double r = pixels[offset(x, y) + 0] / 255.0;
+    const double g = pixels[offset(x, y) + 1] / 255.0;
+    const double b = pixels[offset(x, y) + 2] / 255.0;
 
     return color{r, g, b};
 }
 
-void image::clear(const color &c) {
+void image::clear(const color &c) const {
     for (int y = 0; y < image_height; ++y) {
         for (int x = 0; x < image_width; ++x) {
             set_pixel(x, y, c);
@@ -87,11 +91,13 @@ bool image::write_to_file_ppm(const std::string &filename) const {
     file << "P3\n"
             << image_width << ' ' << image_height << "\n255\n";
 
-    for (int y = image_height - 1; y >= 0; --y) {
-        for (int x = 0; x < image_width; ++x) {
+    for ( int y = static_cast<int>(image_height) - 1; y >= 0; --y) {
+        for (unsigned int x = 0; x < image_width; ++x) {
             const color &c = get_pixel(x, y);
 
-            file << int(255.999 * c.r()) << ' ' << int(255.999 * c.g()) << ' ' << int(255.999 * c.b()) << '\n';
+            file << static_cast<int>(255.999 * c.r()) << ' '
+                    << static_cast<int>(255.999 * c.g()) << ' '
+                    << static_cast<int>(255.999 * c.b()) << '\n';
         }
     }
 
@@ -104,7 +110,7 @@ bool image::write_to_file_png(const std::string &filename) const {
     assert(!filename.empty());
     assert(filename.find(".png") != std::string::npos);
 
-    stbi_write_png(filename.c_str(), image_width, image_height, 4, pixels, 0);
+    stbi_write_png(filename.c_str(), static_cast<int>(image_width), static_cast<int>(image_height), 4, pixels, 0);
     return true;
 #else
     std::cout << "Cannot write to file " << filename << ". STB_IMAGE_WRITE is not enable in Cmake config." << std::endl;
@@ -112,4 +118,4 @@ bool image::write_to_file_png(const std::string &filename) const {
 #endif
 }
 
-int image::offset(int x, int y) const { return (y * image_width + x) * 4; }
+unsigned int image::offset(const unsigned int x, const unsigned int y) const { return (y * image_width + x) * 4; }
