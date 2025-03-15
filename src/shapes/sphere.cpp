@@ -3,11 +3,12 @@
 #include <utility>
 #include <cmath>
 
-sphere::sphere(const point3 &center, const double radius, std::shared_ptr<material> mat) : center(center), radius(radius),
-                                                                                           mat(std::move(mat)) {
-}
+sphere::sphere(const point3& center, const double radius, std::shared_ptr<material> mat)
+    : center(center),
+      radius(radius),
+      mat(std::move(mat)) {}
 
-hit_record sphere::hit(const ray &r) const {
+hit_record sphere::hit(const ray& r) const {
     const vec3 oc = r.origin().to(center);
     const auto a = r.direction().length_squared();
     const auto h = vec3::dot(r.direction(), oc);

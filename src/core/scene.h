@@ -14,11 +14,11 @@ public:
     scene() = default;
     explicit scene(basic_scene scene);
 
-    hittable_list &get_objects();
+    hittable_list& get_objects();
 
-    color ray_color(const ray &r, int n) const;
+    color ray_color(const ray& r, int n) const;
 
-    static color background(const ray &r);
+    static color background(const ray& r);
 
 private:
     hittable_list objects;

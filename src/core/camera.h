@@ -12,23 +12,23 @@ class camera {
 public:
     struct settings {
         point3 lookfrom = point3(0, 0, 0); // Point camera is looking from
-        point3 lookat = point3(0, 0, -1); // Point camera is looking at
-        vec3 vup = vec3(0, 1, 0); // Vector pointing up
+        point3 lookat = point3(0, 0, -1);  // Point camera is looking at
+        vec3 vup = vec3(0, 1, 0);          // Vector pointing up
 
         unsigned int image_width = 400; // Width of the image
         double aspect_ratio = 16. / 9.; // Aspect ratio of the image
-        double vfov = 90; // Vertical field of view in degrees
+        double vfov = 90;               // Vertical field of view in degrees
 
         int anti_aliasing = 5;
         int depth = 50;
     };
 
 public:
-    explicit camera(const settings &settings);
+    explicit camera(const settings& settings);
 
-    void render(const std::function<color(const ray &)> &ray_color_fn);
+    void render(const std::function<color(const ray&)>& ray_color_fn);
 
-    const image &get_image() const { return img; }
+    const image& get_image() const { return img; }
     int get_samples() const { return samples; }
 
 private:

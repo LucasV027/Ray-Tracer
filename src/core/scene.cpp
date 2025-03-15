@@ -20,9 +20,9 @@ scene::scene(basic_scene scene) {
     }
 }
 
-hittable_list &scene::get_objects() { return objects; }
+hittable_list& scene::get_objects() { return objects; }
 
-color scene::ray_color(const ray &r, int n) const {
+color scene::ray_color(const ray& r, int n) const {
     if (n <= 0)
         return {0., 0., 0.};
 
@@ -37,7 +37,7 @@ color scene::ray_color(const ray &r, int n) const {
     return background(r);
 }
 
-color scene::background(const ray &r) {
+color scene::background(const ray& r) {
     vec3 unit_direction = vec3::unit_vector(r.direction());
     auto a = 0.5 * (unit_direction.y() + 1.0);
     return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);

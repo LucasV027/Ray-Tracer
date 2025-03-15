@@ -11,7 +11,7 @@ class material;
 class ray {
 public:
     ray() = default;
-    ray(const point3 &origin, const vec3 &direction);
+    ray(const point3& origin, const vec3& direction);
 
     point3 at(double t) const;
     vec3 direction() const;
@@ -31,13 +31,11 @@ struct hit_record {
 
     std::shared_ptr<material> mat;
 
-    hit_record() : t(infinity), mat(nullptr) {
-    }
+    hit_record() : t(infinity), mat(nullptr) {}
 
-    hit_record(const point3 &point, const vec3 &normal, const double t, std::shared_ptr<material> mat) : point(point),
+    hit_record(const point3& point, const vec3& normal, const double t, std::shared_ptr<material> mat) : point(point),
         normal(normal), t(t),
-        mat(std::move(mat)) {
-    }
+        mat(std::move(mat)) {}
 
     explicit operator bool() const { return t >= 0.001 && t < infinity; }
 };

@@ -3,11 +3,10 @@
 #include <utility>
 #include <cmath>
 
-plan::plan(const point3 &point, const vec3 &normal, std::shared_ptr<material> mat) : point(point),
-    normal(vec3::unit_vector(normal)), mat(std::move(mat)) {
-}
+plan::plan(const point3& point, const vec3& normal, std::shared_ptr<material> mat) : point(point),
+    normal(vec3::unit_vector(normal)), mat(std::move(mat)) {}
 
-hit_record plan::hit(const ray &r) const {
+hit_record plan::hit(const ray& r) const {
     double denom = vec3::dot(normal, r.direction());
 
     if (fabs(denom) > 1e-6) {

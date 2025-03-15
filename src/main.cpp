@@ -24,7 +24,7 @@ int main() {
     scene world(basic_scene::default_scene);
 
     camera cam(cam_settings);
-    cam.render([&](const ray &r) -> color { return world.ray_color(r, cam_settings.depth); });
+    cam.render([&](const ray& r) -> color { return world.ray_color(r, cam_settings.depth); });
 
     cam.get_image().write_to_file("output.png");
 #endif

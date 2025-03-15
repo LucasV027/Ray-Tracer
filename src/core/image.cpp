@@ -13,8 +13,7 @@ image::image()
     : image_width(0),
       image_height(0),
       aspect_ratio(0),
-      pixels(nullptr) {
-}
+      pixels(nullptr) {}
 
 image::image(const unsigned int width, const double aspect_ratio)
     : image_width(width),
@@ -32,16 +31,16 @@ image::~image() {
 unsigned int image::width() const { return image_width; }
 unsigned int image::height() const { return image_height; }
 double image::get_aspect_ratio() const { return aspect_ratio; }
-uint8_t *image::get_pixels() const { return pixels; }
+uint8_t* image::get_pixels() const { return pixels; }
 
-void image::set_pixel(unsigned int x, unsigned int y, const color &c) const {
+void image::set_pixel(unsigned int x, unsigned int y, const color& c) const {
     pixels[offset(x, y) + 0] = static_cast<unsigned char>(255.999 * c.r());
     pixels[offset(x, y) + 1] = static_cast<unsigned char>(255.999 * c.g());
     pixels[offset(x, y) + 2] = static_cast<unsigned char>(255.999 * c.b());
     pixels[offset(x, y) + 3] = 255;
 }
 
-void image::set_pixel(const unsigned int x, const unsigned int y, const color &c, const int samples) const {
+void image::set_pixel(const unsigned int x, const unsigned int y, const color& c, const int samples) const {
     if (samples == 0) {
         set_pixel(x, y, c);
     } else {
@@ -59,7 +58,7 @@ color image::get_pixel(unsigned int x, unsigned int y) const {
     return color{r, g, b};
 }
 
-void image::clear(const color &c) const {
+void image::clear(const color& c) const {
     for (int y = 0; y < image_height; ++y) {
         for (int x = 0; x < image_width; ++x) {
             set_pixel(x, y, c);
@@ -67,7 +66,7 @@ void image::clear(const color &c) const {
     }
 }
 
-void image::write_to_file(const std::string &filename) const {
+void image::write_to_file(const std::string& filename) const {
     bool sucess = false;
     if (filename.find(".ppm") != std::string::npos) {
         sucess = write_to_file_ppm(filename);
@@ -82,22 +81,21 @@ void image::write_to_file(const std::string &filename) const {
         std::cout << "Image saved to " << filename << std::endl;
 }
 
-bool image::write_to_file_ppm(const std::string &filename) const {
+bool image::write_to_file_ppm(const std::string& filename) const {
     assert(!filename.empty());
     assert(filename.find(".ppm") != std::string::npos);
 
     std::ofstream file(filename, std::ios::binary);
 
-    file << "P3\n"
-            << image_width << ' ' << image_height << "\n255\n";
+    file << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
-    for ( int y = static_cast<int>(image_height) - 1; y >= 0; --y) {
+    for (int y = static_cast<int>(image_height) - 1; y >= 0; --y) {
         for (unsigned int x = 0; x < image_width; ++x) {
-            const color &c = get_pixel(x, y);
+            const color& c = get_pixel(x, y);
 
             file << static_cast<int>(255.999 * c.r()) << ' '
-                    << static_cast<int>(255.999 * c.g()) << ' '
-                    << static_cast<int>(255.999 * c.b()) << '\n';
+                << static_cast<int>(255.999 * c.g()) << ' '
+                << static_cast<int>(255.999 * c.b()) << '\n';
         }
     }
 
@@ -105,7 +103,7 @@ bool image::write_to_file_ppm(const std::string &filename) const {
     return true;
 }
 
-bool image::write_to_file_png(const std::string &filename) const {
+bool image::write_to_file_png(const std::string& filename) const {
 #ifdef LIB_STB_IMAGE_WRITE
     assert(!filename.empty());
     assert(filename.find(".png") != std::string::npos);

@@ -10,9 +10,9 @@
 
 class sphere final : public hittable {
 public:
-    sphere(const point3 &center, double radius, std::shared_ptr<material> mat);
+    sphere(const point3& center, double radius, std::shared_ptr<material> mat);
 
-    hit_record hit(const ray &r) const override;
+    hit_record hit(const ray& r) const override;
 
 private:
     point3 center;

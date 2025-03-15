@@ -5,7 +5,7 @@
 
 #ifdef LIB_SFML
 
-app::app(const camera::settings &settings) : screen_width(static_cast<int>(settings.image_width)),
+app::app(const camera::settings& settings) : screen_width(static_cast<int>(settings.image_width)),
                                              screen_height(static_cast<int>(screen_width / settings.aspect_ratio)),
                                              cam(settings),
                                              world(basic_scene::default_scene),
@@ -27,7 +27,7 @@ void app::compute() {
 
     while (window.isOpen()) {
         if (cam.get_samples() < max_samples) {
-            cam.render([&](const ray &r) -> color { return world.ray_color(r, max_depth); });
+            cam.render([&](const ray& r) -> color { return world.ray_color(r, max_depth); });
         } else {
             break;
         }
@@ -77,6 +77,5 @@ void app::run() {
     max_samples = 0;
     compute_thread.join(); // Wait for the compute thread to finish
 }
-
 
 #endif

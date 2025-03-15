@@ -3,14 +3,13 @@
 #include <utils/math.h>
 #include <cmath>
 
-camera::camera(const settings &settings) : look_from(settings.lookfrom),
+camera::camera(const settings& settings) : look_from(settings.lookfrom),
                                            look_at(settings.lookat),
                                            vup(settings.vup),
                                            vfov(settings.vfov),
                                            anti_aliasing(settings.anti_aliasing),
                                            img(settings.image_width, settings.aspect_ratio),
-                                           samples(0)
-{
+                                           samples(0) {
     auto focal_length = (look_at.to(look_from)).length();
     auto theta = math::degrees_to_radians(vfov);
     auto h = std::tan(theta / 2);
@@ -31,19 +30,15 @@ camera::camera(const settings &settings) : look_from(settings.lookfrom),
     up_left_corner = viewport_upper_left + (delta_u / 2) + (delta_v / 2);
 }
 
-void camera::render(const std::function<color(const ray &)>& ray_color_fn)
-{
+void camera::render(const std::function<color(const ray&)>& ray_color_fn) {
 #ifdef LIB_OPENMP
     #pragma omp parallel for schedule(dynamic, 1)
 #endif
-    for (unsigned int j = 0; j < img.height(); j++)
-    {
-        for ( unsigned int i = 0; i < img.width(); i++)
-        {
+    for (unsigned int j = 0; j < img.height(); j++) {
+        for (unsigned int i = 0; i < img.width(); i++) {
             color acc = colors::black;
 
-            for (int k = 0; k < anti_aliasing; k++)
-            {
+            for (int k = 0; k < anti_aliasing; k++) {
                 double ux = math::random_double() - 0.5;
                 double uy = math::random_double() - 0.5;
 
