@@ -32,7 +32,8 @@ camera::camera(const settings& settings) :
 }
 
 void camera::render(const std::function<color(const ray&)>& ray_color_fn) {
-#pragma omp parallel for schedule(dynamic, 1)
+    // TODO : Limit threads number
+    //#pragma omp parallel for schedule(dynamic, 1)
     for (unsigned int j = 0; j < img.height(); j++) {
         for (unsigned int i = 0; i < img.width(); i++) {
             color acc = colors::black;

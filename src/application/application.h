@@ -20,8 +20,8 @@ private:
 private:
     // SFML
     sf::RenderWindow window;
-    sf::Event event{};
     sf::Texture texture;
+    sf::Clock delta_clock;
 
     unsigned int screen_width;
     unsigned int screen_height;

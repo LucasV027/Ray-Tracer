@@ -52,43 +52,17 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC OUT_DIR=\"${OUT_DIR}\")
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
 
-# Libraries
-include(FetchContent)
+add_subdirectory(dependencies)
 
-# stb_image
-message(STATUS "Fetching stb_image")
-FetchContent_Declare(
-        stb_image
-        GIT_REPOSITORY https://github.com/nothings/stb.git
-        GIT_TAG master
-)
-FetchContent_MakeAvailable(stb_image)
-target_include_directories(${PROJECT_NAME} PRIVATE ${stb_image_SOURCE_DIR})
-
-
-# SFML
-message(STATUS "Fetching SFML")
-FetchContent_Declare(
-        SFML
-        GIT_REPOSITORY https://github.com/SFML/SFML.git
-        GIT_TAG 2.6.1
-)
-FetchContent_MakeAvailable(SFML)
-message(STATUS "Fetching SFML done")
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-system)
-
-# OpenMP
 find_package(OpenMP REQUIRED)
-target_compile_options(${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX gomp)
 
-# nlohmann_json
-message(STATUS "Fetching nlohmann_json")
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-FetchContent_Declare(
-        json
-        DOWNLOAD_NO_EXTRACT ON
-        URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+target_link_libraries(${PROJECT_NAME} PRIVATE
+        stb
+        nlohmann_json
+        ImGui-SFML::ImGui-SFML
+        OpenMP::OpenMP_CXX
+        gomp
 )
-FetchContent_MakeAvailable(json)
-target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
+target_compile_options(${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
+
+

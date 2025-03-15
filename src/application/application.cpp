@@ -1,5 +1,9 @@
 #include "application.h"
 
+
+#include <imgui-SFML.h>
+#include <imgui.h>
+
 #include <chrono>
 #include <thread>
 
@@ -11,23 +15,26 @@ application::application(const camera::settings& settings) :
     world(basic_scene::default_scene),
     max_depth(settings.depth) {
 
-    window.create(sf::VideoMode(screen_width, screen_height), "Ray-Tracer");
+
+    window.create(sf::VideoMode({screen_width, screen_height}), "Ray-Tracer");
     window.setFramerateLimit(60);
-    int middleX = sf::VideoMode::getDesktopMode().width / 2 - screen_width / 2;
-    int middleY = sf::VideoMode::getDesktopMode().height / 2 - screen_height / 2;
-    window.setPosition({middleX, middleY});
-    texture.create(window.getSize().x, window.getSize().y);
+    if (!ImGui::SFML::Init(window)) {
+        std::cout << "Failed to initialize Imgui-SFML exiting..." << std::endl;
+        window.close();
+    }
+    (void)texture.resize({window.getSize().x, window.getSize().y});
 }
 
 application::~application() {
     window.close();
+    ImGui::SFML::Shutdown();
 }
 
 void application::compute() {
     const auto start = std::chrono::high_resolution_clock::now();
 
     while (window.isOpen()) {
-        if (cam.get_samples() > max_samples - 1)
+        if (cam.get_samples() >= max_samples)
             break;
 
         cam.render([&](const ray& r) -> color { return world.ray_color(r, max_depth); });
@@ -40,18 +47,19 @@ void application::compute() {
 }
 
 void application::events() {
-    while (window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed)
+    while (const std::optional event = window.pollEvent()) {
+        ImGui::SFML::ProcessEvent(window, *event);
+
+        if (event->is<sf::Event::Closed>()) {
             window.close();
-
-        if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Escape)
+        } else if (const auto* key_pressed = event->getIf<sf::Event::KeyPressed>()) {
+            if (key_pressed->scancode == sf::Keyboard::Scancode::Escape)
                 window.close();
 
-            if (event.key.code == sf::Keyboard::Q)
+            if (key_pressed->scancode == sf::Keyboard::Scancode::Q)
                 window.close();
 
-            if (event.key.code == sf::Keyboard::S)
+            if (key_pressed->scancode == sf::Keyboard::Scancode::S)
                 cam.get_image().write_to_file("../output.png");
         }
     }
@@ -59,10 +67,16 @@ void application::events() {
 
 void application::render() {
     texture.update(cam.get_image().get_pixels());
-    sf::Sprite sprite(texture);
+    const sf::Sprite sprite(texture);
+
+    ImGui::Begin("[INFO] Ray-Tracer");
+    ImGui::Text("Sample %d / %d", cam.get_samples(), max_samples);
+    ImGui::End();
 
     window.clear(sf::Color::White);
     window.draw(sprite);
+
+    ImGui::SFML::Render(window);
     window.display();
 }
 
@@ -71,6 +85,7 @@ void application::run() {
 
     while (window.isOpen()) {
         events();
+        ImGui::SFML::Update(window, delta_clock.restart());
         render();
     }
 
