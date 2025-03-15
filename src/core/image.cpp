@@ -1,24 +1,23 @@
 #include "image.h"
 
-#ifdef LIB_STB_IMAGE_WRITE
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
-#endif
 
 #include <fstream>
 #include <cassert>
 #include <vector>
 
-image::image()
-    : image_width(0),
-      image_height(0),
-      aspect_ratio(0),
-      pixels(nullptr) {}
+image::image() :
+    image_width(0),
+    image_height(0),
+    aspect_ratio(0),
+    pixels(nullptr) {
+}
 
-image::image(const unsigned int width, const double aspect_ratio)
-    : image_width(width),
-      image_height(static_cast<unsigned int>(image_width / aspect_ratio)),
-      aspect_ratio(aspect_ratio) {
+image::image(const unsigned int width, const double aspect_ratio) :
+    image_width(width),
+    image_height(static_cast<unsigned int>(image_width / aspect_ratio)),
+    aspect_ratio(aspect_ratio) {
     assert(image_width > 0);
     assert(image_height > 0);
     pixels = new uint8_t[image_width * image_height * 4]{};
@@ -59,8 +58,8 @@ color image::get_pixel(unsigned int x, unsigned int y) const {
 }
 
 void image::clear(const color& c) const {
-    for (int y = 0; y < image_height; ++y) {
-        for (int x = 0; x < image_width; ++x) {
+    for (unsigned int y = 0; y < image_height; ++y) {
+        for (unsigned int x = 0; x < image_width; ++x) {
             set_pixel(x, y, c);
         }
     }
@@ -104,16 +103,12 @@ bool image::write_to_file_ppm(const std::string& filename) const {
 }
 
 bool image::write_to_file_png(const std::string& filename) const {
-#ifdef LIB_STB_IMAGE_WRITE
     assert(!filename.empty());
     assert(filename.find(".png") != std::string::npos);
 
     stbi_write_png(filename.c_str(), static_cast<int>(image_width), static_cast<int>(image_height), 4, pixels, 0);
     return true;
-#else
-    std::cout << "Cannot write to file " << filename << ". STB_IMAGE_WRITE is not enable in Cmake config." << std::endl;
-    return false;
-#endif
+
 }
 
 unsigned int image::offset(const unsigned int x, const unsigned int y) const { return (y * image_width + x) * 4; }

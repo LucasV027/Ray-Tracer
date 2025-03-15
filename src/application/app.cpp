@@ -3,13 +3,13 @@
 #include <chrono>
 #include <thread>
 
-#ifdef LIB_SFML
 
-app::app(const camera::settings& settings) : screen_width(static_cast<int>(settings.image_width)),
-                                             screen_height(static_cast<int>(screen_width / settings.aspect_ratio)),
-                                             cam(settings),
-                                             world(basic_scene::default_scene),
-                                             max_depth(settings.depth) {
+app::app(const camera::settings& settings) :
+    screen_width(static_cast<int>(settings.image_width)),
+    screen_height(static_cast<int>(screen_width / settings.aspect_ratio)),
+    cam(settings),
+    world(basic_scene::default_scene),
+    max_depth(settings.depth) {
     window.create(sf::VideoMode(screen_width, screen_height), "Ray-Tracer");
     window.setFramerateLimit(60);
     int middleX = sf::VideoMode::getDesktopMode().width / 2 - screen_width / 2;
@@ -78,4 +78,3 @@ void app::run() {
     compute_thread.join(); // Wait for the compute thread to finish
 }
 
-#endif
