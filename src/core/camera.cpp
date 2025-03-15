@@ -3,18 +3,19 @@
 #include <utils/math.h>
 #include <cmath>
 
-camera::camera(const settings& settings) : look_from(settings.lookfrom),
-                                           look_at(settings.lookat),
-                                           vup(settings.vup),
-                                           vfov(settings.vfov),
-                                           anti_aliasing(settings.anti_aliasing),
-                                           img(settings.image_width, settings.aspect_ratio),
-                                           samples(0) {
-    auto focal_length = (look_at.to(look_from)).length();
-    auto theta = math::degrees_to_radians(vfov);
-    auto h = std::tan(theta / 2);
-    auto viewport_height = 2 * h * focal_length;
-    auto viewport_width = viewport_height * (static_cast<double>(img.width()) / img.height());
+camera::camera(const settings& settings) :
+    look_from(settings.lookfrom),
+    look_at(settings.lookat),
+    vup(settings.vup),
+    vfov(settings.vfov),
+    anti_aliasing(settings.anti_aliasing),
+    img(settings.image_width, settings.aspect_ratio),
+    samples(0) {
+    const double focal_length = (look_at.to(look_from)).length();
+    const double theta = math::degrees_to_radians(vfov);
+    const double h = std::tan(theta / 2);
+    const double viewport_height = 2 * h * focal_length;
+    const double viewport_width = viewport_height * (static_cast<double>(img.width()) / img.height());
 
     w = vec3::unit_vector(look_at.to(look_from));
     u = vec3::unit_vector(vec3::cross(vup, w));
@@ -31,9 +32,7 @@ camera::camera(const settings& settings) : look_from(settings.lookfrom),
 }
 
 void camera::render(const std::function<color(const ray&)>& ray_color_fn) {
-#ifdef LIB_OPENMP
-    #pragma omp parallel for schedule(dynamic, 1)
-#endif
+#pragma omp parallel for schedule(dynamic, 1)
     for (unsigned int j = 0; j < img.height(); j++) {
         for (unsigned int i = 0; i < img.width(); i++) {
             color acc = colors::black;

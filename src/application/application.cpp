@@ -1,15 +1,16 @@
-#include "app.h"
+#include "application.h"
 
 #include <chrono>
 #include <thread>
 
 
-app::app(const camera::settings& settings) :
+application::application(const camera::settings& settings) :
     screen_width(static_cast<int>(settings.image_width)),
     screen_height(static_cast<int>(screen_width / settings.aspect_ratio)),
     cam(settings),
     world(basic_scene::default_scene),
     max_depth(settings.depth) {
+
     window.create(sf::VideoMode(screen_width, screen_height), "Ray-Tracer");
     window.setFramerateLimit(60);
     int middleX = sf::VideoMode::getDesktopMode().width / 2 - screen_width / 2;
@@ -18,19 +19,18 @@ app::app(const camera::settings& settings) :
     texture.create(window.getSize().x, window.getSize().y);
 }
 
-app::~app() {
+application::~application() {
     window.close();
 }
 
-void app::compute() {
-    auto start = std::chrono::high_resolution_clock::now();
+void application::compute() {
+    const auto start = std::chrono::high_resolution_clock::now();
 
     while (window.isOpen()) {
-        if (cam.get_samples() < max_samples) {
-            cam.render([&](const ray& r) -> color { return world.ray_color(r, max_depth); });
-        } else {
+        if (cam.get_samples() > max_samples - 1)
             break;
-        }
+
+        cam.render([&](const ray& r) -> color { return world.ray_color(r, max_depth); });
     }
 
     const auto end = std::chrono::high_resolution_clock::now();
@@ -39,7 +39,7 @@ void app::compute() {
     std::cout << "Compute thread finished in " << elapsed.count() << " seconds" << std::endl;
 }
 
-void app::events() {
+void application::events() {
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed)
             window.close();
@@ -57,7 +57,7 @@ void app::events() {
     }
 }
 
-void app::render() {
+void application::render() {
     texture.update(cam.get_image().get_pixels());
     sf::Sprite sprite(texture);
 
@@ -66,8 +66,8 @@ void app::render() {
     window.display();
 }
 
-void app::run() {
-    std::thread compute_thread(&app::compute, this);
+void application::run() {
+    std::thread compute_thread(&application::compute, this);
 
     while (window.isOpen()) {
         events();

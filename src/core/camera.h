@@ -5,7 +5,6 @@
 #include "utils/vec3.h"
 #include "utils/ray.h"
 #include "utils/color.h"
-
 #include "core/image.h"
 
 class camera {
@@ -43,8 +42,8 @@ private:
     vec3 w;
     int anti_aliasing;
 
-    double viewport_width;
-    double viewport_height;
+    double viewport_width{};
+    double viewport_height{};
     vec3 delta_u;
     vec3 delta_v;
 

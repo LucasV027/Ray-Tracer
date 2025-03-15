@@ -1,7 +1,7 @@
 #include "core/camera.h"
 #include "core/scene.h"
 
-#include "application/app.h"
+#include "application/application.h"
 
 int main() {
     camera::settings cam_settings;
@@ -13,7 +13,7 @@ int main() {
     cam_settings.depth = 50;
 
     cam_settings.anti_aliasing = 1;
-    app app(cam_settings);
+    application app(cam_settings);
     app.run();
 
 }

@@ -9,8 +9,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 add_executable(${PROJECT_NAME}
         src/main.cpp
 
-        src/application/app.cpp
-        src/application/app.h
+        src/application/application.cpp
+        src/application/application.h
 
         src/core/image.h
         src/core/image.cpp

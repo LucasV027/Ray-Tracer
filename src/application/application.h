@@ -5,10 +5,10 @@
 #include "core/camera.h"
 #include "core/scene.h"
 
-class app {
+class application {
 public:
-    explicit app(const camera::settings& settings);
-    ~app();
+    explicit application(const camera::settings& settings);
+    ~application();
 
     void run();
 
